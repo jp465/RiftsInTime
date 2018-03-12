@@ -1,124 +1,78 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+
 
 public class LevelManager : MonoBehaviour {
 
-	public PlayerController player;
+    public static LevelManager LM;
+    public PlayerController player;
+    public KeyCode jump { get; set; }
+    public KeyCode left { get; set; }
+    public KeyCode right { get; set; }
+    public KeyCode shield { get; set; }
+    public KeyCode interact { get; set; }
+    public KeyCode attack { get; set; }
+    public KeyCode rift1 { get; set; }
+    public KeyCode rift2 { get; set; }
+    public KeyCode rift3 { get; set; }
+    public KeyCode weapon1 { get; set; }
+    public KeyCode weapon2 { get; set; }
+    public KeyCode weapon3 { get; set; }
+    public KeyCode weapon4 { get; set; }
+    public KeyCode weapon5 { get; set; }
+    public KeyCode pause { get; set; }
 
-	//Respawn
-	public float respawnDelay;
-	public GameObject deathParticles;
-
-	//Coins
-	public Text coinCounterText;
-
-	//Health
-	public int maxHealth;
-	public int currentHealth;
-
-	// Use this for initialization
-	void Start () {
-		player = FindObjectOfType<PlayerController>();
-		coinCounterText.text = "Coins: "+0;
-		currentHealth = maxHealth;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-	public void Respawn(){
-		currentHealth = 0;
-		updateUI();
-		StartCoroutine("RespawnDelayCo");
-        currentHealth = 0;
-        updateUI();
+    private void Awake()
+    {
+        
+        if (LM == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            LM = this;
+        }else if(LM != this)
+        {
+            Destroy(gameObject);
+        }
+        
+        jump = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("jumpKey", "W"));
+        left = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("leftKey", "A"));
+        right = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("rightKey", "D"));
+        shield = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("shieldKey", "S"));
+        interact = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("interactKey", "E"));
+        attack = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("attackKey", "Space"));
+        rift1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("rift1Key", "B"));
+        rift2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("rift2Key", "N"));
+        rift3 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("rift3Key", "M"));
+        weapon1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon1Key", "1"));
+        weapon2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon2Key", "2"));
+        weapon3 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon3Key", "3"));
+        weapon4 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon4Key", "4"));
+        weapon5 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon5Key", "5"));
+        pause = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("pauseKey", "Escape"));
     }
 
-	public IEnumerator RespawnDelayCo(){
-        Instantiate(deathParticles,player.transform.position,player.transform.rotation);
-		player.gameObject.SetActive(false);
-		yield return new WaitForSeconds(respawnDelay);
-		player.transform.position = player.respawnLocation;
-		player.gameObject.SetActive(true);
-		currentHealth=maxHealth;
-		updateUI();
-	}
+    public void Respawn()
+    {
+        player.currentHealth = 0;
+        player.updateUI();
+        Debug.Log(player.respawnLocation + "respawn");
+        player.currentHealth = 0;
+        StartCoroutine("RespawnDelayCo");
+        player.updateUI();
+    }
 
-	public void updateUI(){
-		coinCounterText.text = "Coins: "+PlayerPrefs.GetInt("coins");
-	}
+    IEnumerator RespawnDelayCo()
+    {
 
-	public void playerDamage(int damage){
-		currentHealth-=damage;
-	}
-/*
-	public void updateHearts(){
-		switch(currentHealth){
-			case 8: heart1.sprite=fullHeart;
-					heart2.sprite=fullHeart;
-					heart3.sprite=fullHeart;
-					heart4.sprite=fullHeart;
-					return;
-
-			case 7: heart1.sprite=fullHeart;
-					heart2.sprite=fullHeart;
-					heart3.sprite=fullHeart;
-					heart4.sprite=halfHeart;
-					return;
-
-			case 6: heart1.sprite=fullHeart;
-					heart2.sprite=fullHeart;
-					heart3.sprite=fullHeart;
-					heart4.sprite=emptyHeart;
-					return;
-
-			case 5: heart1.sprite=fullHeart;
-					heart2.sprite=fullHeart;
-					heart3.sprite=halfHeart;
-					heart4.sprite=emptyHeart;
-					return;
-
-			case 4: heart1.sprite=fullHeart;
-					heart2.sprite=fullHeart;
-					heart3.sprite=emptyHeart;
-					heart4.sprite=emptyHeart;
-					return;
-
-			case 3: heart1.sprite=fullHeart;
-					heart2.sprite=halfHeart;
-					heart3.sprite=emptyHeart;
-					heart4.sprite=emptyHeart;
-					return;
-
-			case 2: heart1.sprite=fullHeart;
-					heart2.sprite=emptyHeart;
-					heart3.sprite=emptyHeart;
-					heart4.sprite=emptyHeart;
-					return;
-
-			case 1: heart1.sprite=halfHeart;
-					heart2.sprite=emptyHeart;
-					heart3.sprite=emptyHeart;
-					heart4.sprite=emptyHeart;
-					return;
-
-			case 0: heart1.sprite=emptyHeart;
-					heart2.sprite=emptyHeart;
-					heart3.sprite=emptyHeart;
-					heart4.sprite=emptyHeart;
-					return;
-
-			default:heart1.sprite=emptyHeart;
-					heart2.sprite=emptyHeart;
-					heart3.sprite=emptyHeart;
-					heart4.sprite=emptyHeart;
-					return;
-		}
-	}
-*/
-
+        Instantiate(player.deathParticles, player.transform.position, player.transform.rotation);
+        player.gameObject.SetActive(false);
+        Debug.Log(player.respawnLocation + " respawnco1 " + player.respawnDelay);
+        yield return new WaitForSeconds(player.respawnDelay);
+        Debug.Log(player.respawnLocation + " respawnco2");
+        player.transform.position = player.respawnLocation;
+        player.gameObject.SetActive(true);
+        player.currentHealth = player.maxHealth;
+        player.updateUI();
+    }
 }

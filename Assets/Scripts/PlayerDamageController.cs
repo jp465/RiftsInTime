@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PlayerDamageController : MonoBehaviour {
 
-	private LevelManager levMan;
+	private PlayerController player;
 	public int damageToPlayer;
 	public AudioClip damage;
 	// Use this for initialization
 	void Start () {
-		levMan = FindObjectOfType<LevelManager>();
+		player = FindObjectOfType<PlayerController>();
 	}
 	
 	// Update is called once per frame
@@ -19,11 +19,10 @@ public class PlayerDamageController : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other){
 		if(other.tag=="Player"){
-			//AudioSource.PlayClipAtPoint(damage,transform.position);
-			levMan.playerDamage(damageToPlayer);
-			levMan.updateUI();
-			if(levMan.currentHealth<=0){
-				levMan.Respawn();
+            player.playerDamage(damageToPlayer);
+            player.updateUI();
+			if(player.currentHealth<=0){
+                LevelManager.LM.Respawn();
 			}
 		}
 	}

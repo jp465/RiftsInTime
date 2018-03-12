@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
-	public float speedOfPlayerWalk;
+    //Movement
+    public float speedOfPlayerWalk;
 	private Rigidbody2D playerRB;
 	public float jumpHeight;
 	public Transform groundCheck;
@@ -18,6 +19,16 @@ public class PlayerController : MonoBehaviour {
 	private LevelManager levMan;
 	public int wallet;
 
+    //Respawn
+    public float respawnDelay;
+    public GameObject deathParticles;
+
+    //Coins
+    public Text coinCounterText;
+
+    //Health
+    public int maxHealth;
+    public int currentHealth;
     public Slider healthBar;
 
     //Shooting
@@ -26,17 +37,15 @@ public class PlayerController : MonoBehaviour {
     int direction=1;
     bool allowFire = true;
 
-    //public AudioClip jump;
-    //public AudioClip damage;
-    //public AudioClip coin;
-
     // Use this for initialization
     void Start () {
-		playerRB = GetComponent<Rigidbody2D>();
+        playerRB = GetComponent<Rigidbody2D>();
 		playerAnim = GetComponent<Animator>();
 		respawnLocation = transform.position;
-		levMan = FindObjectOfType<LevelManager>();
-		levMan.updateUI();
+        Debug.Log(respawnLocation);
+        coinCounterText.text = "Coins: " + 0;
+        currentHealth = maxHealth;
+        updateUI();
 		wallet = PlayerPrefs.GetInt("coins");
 	}
 	
@@ -44,17 +53,18 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
 		playerMovementController();
         playerWeaponController();
-        healthBar.value = levMan.currentHealth;
+        healthBar.value = currentHealth;
 	}
 
 	void playerMovementController(){
 		isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 		//Controls
-		if(Input.GetAxisRaw("Horizontal")>0f){
+		if(Input.GetKey(LevelManager.LM.right)){
 			playerRB.velocity = new Vector2(speedOfPlayerWalk, playerRB.velocity.y);
 			transform.localScale = new Vector3(1f,1f,1f);
             direction = 1;
-		} else if(Input.GetAxisRaw("Horizontal")<0f){
+		} else if(Input.GetKey(LevelManager.LM.left))
+        {
 			playerRB.velocity = new Vector2(-speedOfPlayerWalk, playerRB.velocity.y);
 			transform.localScale = new Vector3(-1f,1f,1f);
             direction = -1;
@@ -62,7 +72,8 @@ public class PlayerController : MonoBehaviour {
 			playerRB.velocity = new Vector2(0f, playerRB.velocity.y);
 		}
 
-		if(Input.GetKeyDown(KeyCode.W)){
+		if(Input.GetKeyDown(LevelManager.LM.jump))
+        {
 			playerJump();
 		}
 
@@ -72,13 +83,12 @@ public class PlayerController : MonoBehaviour {
 
 	void playerJump(){
 		if(isGrounded){
-			//AudioSource.PlayClipAtPoint(jump,transform.position);
 			playerRB.velocity = new Vector2(playerRB.velocity.x, jumpHeight);
 		}
 	}
 
     void playerWeaponController() {
-        if (Input.GetKeyDown(KeyCode.Space)&allowFire==true)
+        if (Input.GetKey(LevelManager.LM.attack) & allowFire==true)
         {
             Debug.Log("shoot");
             fire();
@@ -89,7 +99,7 @@ public class PlayerController : MonoBehaviour {
     {
         allowFire = false;
         var shoot = Instantiate(laser_projectile, projectileSpawn.position, projectileSpawn.rotation);
-        shoot.GetComponent<Rigidbody2D>().velocity = projectileSpawn.transform.right * direction * 7;
+        shoot.GetComponent<Rigidbody2D>().velocity = projectileSpawn.transform.right * direction * 9;
         StartCoroutine("fireRateCap");
         
     }
@@ -100,24 +110,29 @@ public class PlayerController : MonoBehaviour {
         allowFire = true;
     }
     
+    public void updateUI()
+    {
+        coinCounterText.text = "Coins: " + PlayerPrefs.GetInt("coins");
+    }
+
+    public void playerDamage(int damage)
+    {
+        currentHealth -= damage;
+    }
+
     void OnTriggerEnter2D(Collider2D other){
 		if(other.tag=="Kill Plane"){
-			//AudioSource.PlayClipAtPoint(damage,transform.position);
-			levMan.Respawn();
+			LevelManager.LM.Respawn();
 		}
 
 		if(other.tag=="Checkpoint"){
 			respawnLocation = other.transform.position;
-			
 		}
 
 		if (other.gameObject.CompareTag("Exit")){
-	
 			SceneManager.LoadScene(PlayerPrefs.GetString("nextScene"));
-
 		}
-
-	}
+ 	}
 
 	void OnCollisionEnter2D(Collision2D other){
 		if(other.gameObject.tag=="MovingPlatform"){
@@ -132,10 +147,9 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void addCoin(int coins){
-		//AudioSource.PlayClipAtPoint(coin,transform.position);
 		wallet+=coins;
 		PlayerPrefs.SetInt("coins",wallet);
-		levMan.updateUI();
+		updateUI();
 	}
 
 }
