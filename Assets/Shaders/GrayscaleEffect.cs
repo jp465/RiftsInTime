@@ -8,11 +8,11 @@ public class GrayscaleEffect : MonoBehaviour
     public float intensity;
     private Material material;
     public CRTEffect CrtEffect;
-    bool isEffectActive = false; 
-
+    bool isEffectActive = false;
+    public LevelManager LM;
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B)&&!isEffectActive)
+        if (Input.GetKeyDown(LM.rift1)&&!isEffectActive)
         {
             isEffectActive = true;
             Debug.Log("press");
