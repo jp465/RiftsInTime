@@ -5140,6 +5140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   intensity: 0
   CrtEffect: {fileID: 2097859220}
+  LM: {fileID: 1634137602}
 --- !u!114 &2097859220
 MonoBehaviour:
   m_ObjectHideFlags: 0

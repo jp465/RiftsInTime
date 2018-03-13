@@ -44,11 +44,11 @@ public class LevelManager : MonoBehaviour {
         rift1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("rift1Key", "B"));
         rift2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("rift2Key", "N"));
         rift3 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("rift3Key", "M"));
-        weapon1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon1Key", "1"));
-        weapon2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon2Key", "2"));
-        weapon3 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon3Key", "3"));
-        weapon4 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon4Key", "4"));
-        weapon5 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon5Key", "5"));
+        weapon1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon1Key", "Alpha1"));
+        weapon2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon2Key", "Alpha2"));
+        weapon3 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon3Key", "Alpha3"));
+        weapon4 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon4Key", "Alpha4"));
+        weapon5 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("weapon5Key", "Alpha5"));
         pause = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("pauseKey", "Escape"));
     }
 
@@ -67,7 +67,7 @@ public class LevelManager : MonoBehaviour {
 
         Instantiate(player.deathParticles, player.transform.position, player.transform.rotation);
         player.gameObject.SetActive(false);
-        Debug.Log(player.respawnLocation + " respawnco1 " + player.respawnDelay);
+        Debug.Log(player.respawnLocation + " respawnco1 " + player.respawnDelay + " seconds");
         yield return new WaitForSeconds(player.respawnDelay);
         Debug.Log(player.respawnLocation + " respawnco2");
         player.transform.position = player.respawnLocation;
