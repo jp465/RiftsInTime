@@ -12,8 +12,8 @@ public class PlayerController : MonoBehaviour {
 	public float jumpHeight;
 	public Transform groundCheck;
 	public float groundCheckRadius;
-	public LayerMask groundLayer;
-	public bool isGrounded;
+
+
 	private Animator playerAnim;
 	public Vector3 respawnLocation;
 	private LevelManager levMan;
@@ -37,10 +37,16 @@ public class PlayerController : MonoBehaviour {
     int direction=1;
     bool allowFire = true;
 
+    public bool timeSlowed = false;
+    float slowMod;
+
+    CharMovement playerMove;
+
     // Use this for initialization
     void Start () {
         playerRB = GetComponent<Rigidbody2D>();
 		playerAnim = GetComponent<Animator>();
+        playerMove = GetComponent<CharMovement>();
 		respawnLocation = transform.position;
         Debug.Log(respawnLocation);
         coinCounterText.text = "Coins: " + 0;
@@ -54,22 +60,26 @@ public class PlayerController : MonoBehaviour {
 		playerMovementController();
         playerWeaponController();
         healthBar.value = currentHealth;
+
+        if (timeSlowed == true)
+            slowMod = .5f;
+        else
+            slowMod = 1f;
 	}
 
 	void playerMovementController(){
-		isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 		//Controls
 		if(Input.GetKey(LevelManager.LM.right)){
-			playerRB.velocity = new Vector2(speedOfPlayerWalk, playerRB.velocity.y);
+			playerMove.velocity = new Vector2(speedOfPlayerWalk, playerMove.velocity.y);
 			transform.localScale = new Vector3(1f,1f,1f);
             direction = 1;
 		} else if(Input.GetKey(LevelManager.LM.left))
         {
-			playerRB.velocity = new Vector2(-speedOfPlayerWalk, playerRB.velocity.y);
+            playerMove.velocity = new Vector2(-speedOfPlayerWalk, playerMove.velocity.y);
 			transform.localScale = new Vector3(-1f,1f,1f);
             direction = -1;
 		} else {
-			playerRB.velocity = new Vector2(0f, playerRB.velocity.y);
+            playerMove.velocity = new Vector2(0f, playerMove.velocity.y);
 		}
 
 		if(Input.GetKeyDown(LevelManager.LM.jump))
@@ -77,14 +87,18 @@ public class PlayerController : MonoBehaviour {
 			playerJump();
 		}
 
-		playerAnim.SetFloat("speed", Mathf.Abs(playerRB.velocity.x));
-		playerAnim.SetBool("isGrounded", isGrounded);
+		playerAnim.SetFloat("speed", Mathf.Abs(playerMove.velocity.x));
+		playerAnim.SetBool("isGrounded", playerMove.isGrounded);
 	}
 
 	void playerJump(){
-		if(isGrounded){
-			playerRB.velocity = new Vector2(playerRB.velocity.x, jumpHeight);
-		}
+		if(playerMove.isGrounded && !timeSlowed){
+            playerMove.velocity = new Vector2(playerMove.velocity.x, jumpHeight);
+		}else if(playerMove.isGrounded && timeSlowed)
+        {
+            //playerRB.velocity = new Vector2(playerRB.velocity.x, jumpHeight)*(1/slowMod);
+            playerMove.velocity = new Vector2(playerMove.velocity.x, jumpHeight);
+        }
 	}
 
     void playerWeaponController() {
@@ -99,7 +113,7 @@ public class PlayerController : MonoBehaviour {
     {
         allowFire = false;
         var shoot = Instantiate(laser_projectile, projectileSpawn.position, projectileSpawn.rotation);
-        shoot.GetComponent<Rigidbody2D>().velocity = projectileSpawn.transform.right * direction * 9;
+        shoot.GetComponent<Rigidbody2D>().velocity = projectileSpawn.transform.right * direction * 9 * slowMod;
         StartCoroutine("fireRateCap");
         
     }

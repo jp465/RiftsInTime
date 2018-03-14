@@ -48,10 +48,6 @@ public class InputController : MonoBehaviour {
                 sliderContent.GetChild(i).GetComponentInChildren<Text>().text = LevelManager.LM.pause.ToString();
         }
 	}
-	
-	void Update () {
-		
-	}
 
     private void OnGUI()
     {

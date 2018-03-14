@@ -10,11 +10,13 @@ public class GrayscaleEffect : MonoBehaviour
     public CRTEffect CrtEffect;
     bool isEffectActive = false;
     public LevelManager LM;
+    public PlayerController PC;
     private void Update()
     {
         if (Input.GetKeyDown(LM.rift1)&&!isEffectActive)
         {
             isEffectActive = true;
+            PC.timeSlowed = true;
             Debug.Log("press");
             StartCoroutine("FadeIn");
             
@@ -61,5 +63,6 @@ public class GrayscaleEffect : MonoBehaviour
         }
         CrtEffect.crtEffectActive = false;
         isEffectActive = false;
+        PC.timeSlowed = false;
     }
 }

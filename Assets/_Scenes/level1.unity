@@ -2580,6 +2580,7 @@ GameObject:
   - component: {fileID: 1036597899}
   - component: {fileID: 1036597900}
   - component: {fileID: 1036597901}
+  - component: {fileID: 1036597902}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -2644,9 +2645,9 @@ Rigidbody2D:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1036597894}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 0
+  m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
@@ -2686,10 +2687,6 @@ MonoBehaviour:
   jumpHeight: 12
   groundCheck: {fileID: 1180925007}
   groundCheckRadius: 0.2
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 512
-  isGrounded: 0
   respawnLocation: {x: 0, y: 0, z: 0}
   wallet: 0
   respawnDelay: 2
@@ -2702,6 +2699,7 @@ MonoBehaviour:
   laser_projectile: {fileID: 1881056668589434, guid: 1be62c29992e8d24ab48af8701d1c0b9,
     type: 2}
   projectileSpawn: {fileID: 140881199}
+  timeSlowed: 0
 --- !u!95 &1036597900
 Animator:
   serializedVersion: 3
@@ -2799,6 +2797,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &1036597902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1036597894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca2724072ffc90741bda198c93110fb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0, z: 0}
+  isGrounded: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &1066029709
 GameObject:
   m_ObjectHideFlags: 0
@@ -5141,6 +5155,7 @@ MonoBehaviour:
   intensity: 0
   CrtEffect: {fileID: 2097859220}
   LM: {fileID: 1634137602}
+  PC: {fileID: 1036597899}
 --- !u!114 &2097859220
 MonoBehaviour:
   m_ObjectHideFlags: 0
