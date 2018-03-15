@@ -11,6 +11,11 @@ public class GrayscaleEffect : MonoBehaviour
     bool isEffectActive = false;
     public LevelManager LM;
     public PlayerController PC;
+
+    private void Start()
+    {
+       // PC = GetType(PlayerController);
+    }
     private void Update()
     {
         if (Input.GetKeyDown(LM.rift1)&&!isEffectActive)

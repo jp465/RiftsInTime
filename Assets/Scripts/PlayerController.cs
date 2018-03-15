@@ -8,23 +8,31 @@ public class PlayerController : MonoBehaviour {
 
     //Movement
     public float speedOfPlayerWalk;
-	private Rigidbody2D playerRB;
-	public float jumpHeight;
-	public Transform groundCheck;
-	public float groundCheckRadius;
+    CharMovement playerMove;
+    Transform groundCheck;
+    const float groundedRadius = .2f;
+    bool isGrounded;
+    [SerializeField] LayerMask whatIsGround;
+    Rigidbody2D playerRB;
 
+    //Jumping
+    public float maxJumpHeight;
+    Vector3 currentJumpPosition;
+    bool isJumping;
+    [SerializeField] bool airControl = false;
 
-	private Animator playerAnim;
-	public Vector3 respawnLocation;
-	private LevelManager levMan;
-	public int wallet;
+    //Misc
+    private Animator playerAnim;
+    private SpriteRenderer sprRen;
 
     //Respawn
+    public Vector3 respawnLocation;
     public float respawnDelay;
     public GameObject deathParticles;
 
     //Coins
     public Text coinCounterText;
+    public int wallet;
 
     //Health
     public int maxHealth;
@@ -36,19 +44,26 @@ public class PlayerController : MonoBehaviour {
     public Transform projectileSpawn;
     int direction=1;
     bool allowFire = true;
-
+    float projSpawnX;
+    
+    //Slow Time
     public bool timeSlowed = false;
     float slowMod;
 
-    CharMovement playerMove;
+
+    private void Awake()
+    {
+        // Setting up references.
+        groundCheck = transform.Find("GroundCheck");
+        playerRB = GetComponent<Rigidbody2D>();
+        playerAnim = GetComponent<Animator>();
+        sprRen = GetComponent<SpriteRenderer>();
+        projSpawnX = projectileSpawn.transform.localPosition.x;
+    }
 
     // Use this for initialization
     void Start () {
-        playerRB = GetComponent<Rigidbody2D>();
-		playerAnim = GetComponent<Animator>();
-        playerMove = GetComponent<CharMovement>();
 		respawnLocation = transform.position;
-        Debug.Log(respawnLocation);
         coinCounterText.text = "Coins: " + 0;
         currentHealth = maxHealth;
         updateUI();
@@ -57,7 +72,6 @@ public class PlayerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		playerMovementController();
         playerWeaponController();
         healthBar.value = currentHealth;
 
@@ -67,40 +81,53 @@ public class PlayerController : MonoBehaviour {
             slowMod = 1f;
 	}
 
-	void playerMovementController(){
-		//Controls
-		if(Input.GetKey(LevelManager.LM.right)){
-			playerMove.velocity = new Vector2(speedOfPlayerWalk, playerMove.velocity.y);
-			transform.localScale = new Vector3(1f,1f,1f);
-            direction = 1;
-		} else if(Input.GetKey(LevelManager.LM.left))
+    private void FixedUpdate()
+    {
+        isGrounded = false;
+        
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, groundedRadius, whatIsGround);
+        for (int i = 0; i < colliders.Length; i++)
         {
-            playerMove.velocity = new Vector2(-speedOfPlayerWalk, playerMove.velocity.y);
-			transform.localScale = new Vector3(-1f,1f,1f);
-            direction = -1;
-		} else {
-            playerMove.velocity = new Vector2(0f, playerMove.velocity.y);
-		}
-
-		if(Input.GetKeyDown(LevelManager.LM.jump))
-        {
-			playerJump();
-		}
-
-		playerAnim.SetFloat("speed", Mathf.Abs(playerMove.velocity.x));
-		playerAnim.SetBool("isGrounded", playerMove.isGrounded);
-	}
-
-	void playerJump(){
-		if(playerMove.isGrounded && !timeSlowed){
-            playerMove.velocity = new Vector2(playerMove.velocity.x, jumpHeight);
-		}else if(playerMove.isGrounded && timeSlowed)
-        {
-            //playerRB.velocity = new Vector2(playerRB.velocity.x, jumpHeight)*(1/slowMod);
-            playerMove.velocity = new Vector2(playerMove.velocity.x, jumpHeight);
+            if (colliders[i].gameObject != gameObject)
+                isGrounded = true;
         }
-	}
+     }
 
+    public void playerMovementController(float move, bool jump)
+    {
+        //only control the player if grounded or airControl is turned on
+        if (isGrounded || airControl)
+        {
+            // Move the character
+            playerRB.velocity = new Vector2(move * speedOfPlayerWalk, playerRB.velocity.y) ;
+
+            if (move > 0)
+            {
+                sprRen.flipX = false;
+                direction = 1;
+                projectileSpawn.transform.localPosition = new Vector3(projSpawnX, 0f, 0f);
+            }else if (move < 0)
+            {
+                sprRen.flipX = true;
+                direction = -1;
+                projectileSpawn.transform.localPosition = new Vector3(-projSpawnX, 0f, 0f);
+            }
+        }
+
+        // If the player should jump...
+        if (isGrounded && jump)
+        {
+            // Add a vertical force to the player.
+            isGrounded = false;
+            airControl = true;
+            playerRB.velocity = new Vector2(0f, maxJumpHeight);
+            
+        }
+
+        //playerAnim.SetFloat("speed", Mathf.Abs(playerMove.velocity.x));
+        playerAnim.SetBool("isGrounded", isGrounded);
+    }
+    
     void playerWeaponController() {
         if (Input.GetKey(LevelManager.LM.attack) & allowFire==true)
         {

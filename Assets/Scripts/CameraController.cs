@@ -9,10 +9,13 @@ public class CameraController : MonoBehaviour {
 	private Vector3 targetPosition;
 	public float cameraSmoothing;
 	public float cameraYLock;
-
-
-	// Update is called once per frame
-	void Update () {
+    SpriteRenderer sprRen;
+    private void Start()
+    {
+        sprRen = target.GetComponent<SpriteRenderer>();
+    }
+    // Update is called once per frame
+    void Update () {
 		if(target.transform.position.y<0){
 			targetPosition = new Vector3(target.transform.position.x,cameraYLock,transform.position.z);
 		}else if(target.transform.position.y>=0){
@@ -20,7 +23,7 @@ public class CameraController : MonoBehaviour {
 		}
 
 		//follow ahead
-		if(target.transform.localScale.x>0f){
+		if(sprRen.flipX==false){
 			targetPosition = new Vector3(targetPosition.x+followAhead, targetPosition.y, targetPosition.z);
 		}else{
 			targetPosition = new Vector3(targetPosition.x-followAhead, targetPosition.y, targetPosition.z);
