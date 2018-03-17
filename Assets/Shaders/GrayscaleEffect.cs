@@ -9,7 +9,6 @@ public class GrayscaleEffect : MonoBehaviour
     private Material material;
     public CRTEffect CrtEffect;
     bool isEffectActive = false;
-    public LevelManager LM;
     public PlayerController PC;
 
     private void Start()
@@ -18,7 +17,7 @@ public class GrayscaleEffect : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKeyDown(LM.rift1)&&!isEffectActive)
+        if (Input.GetKeyDown(InputManager.IM.rift1)&&!isEffectActive)
         {
             isEffectActive = true;
             PC.timeSlowed = true;
@@ -30,6 +29,7 @@ public class GrayscaleEffect : MonoBehaviour
     void Awake()
     {
         material = new Material(Shader.Find("Hidden/GrayscaleShader"));
+        
     }
 
     void OnRenderImage(RenderTexture source, RenderTexture destination)

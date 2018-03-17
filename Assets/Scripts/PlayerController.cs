@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour {
     //Health
     public int maxHealth;
     public int currentHealth;
-    public Slider healthBar;
+    //public Slider healthBar;
 
     //Shooting
     public GameObject laser_projectile;
@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         playerWeaponController();
-        healthBar.value = currentHealth;
+        //healthBar.value = currentHealth;
 
         if (timeSlowed == true)
             slowMod = .5f;
@@ -129,7 +129,7 @@ public class PlayerController : MonoBehaviour {
     }
     
     void playerWeaponController() {
-        if (Input.GetKey(LevelManager.LM.attack) & allowFire==true)
+        if (Input.GetKey(InputManager.IM.attack) & allowFire==true)
         {
             Debug.Log("shoot");
             fire();
@@ -192,5 +192,10 @@ public class PlayerController : MonoBehaviour {
 		PlayerPrefs.SetInt("coins",wallet);
 		updateUI();
 	}
+
+    void knockback()
+    {
+
+    }
 
 }

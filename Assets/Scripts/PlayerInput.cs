@@ -19,8 +19,8 @@ public class PlayerInput : MonoBehaviour {
         if (!isJumping)
         {
             // Read the jump input in Update so button presses aren't missed.
-            isJumping = Input.GetKeyDown(LevelManager.LM.jump);
-            Debug.Log("isJumping = " + isJumping);
+            isJumping = Input.GetKeyDown(InputManager.IM.jump);
+            
         }
     }
 
@@ -29,15 +29,15 @@ public class PlayerInput : MonoBehaviour {
     {
         // Read the inputs.
 
-        if (Input.GetKey(LevelManager.LM.right))
+        if (Input.GetKey(InputManager.IM.right))
             dir = 1;
-        else if (Input.GetKey(LevelManager.LM.left))
+        else if (Input.GetKey(InputManager.IM.left))
             dir = -1;
         else
             dir = 0;
         
         
-        Debug.Log("dir = " + dir);
+        
 
         // Pass all parameters to the character control script.
         player.playerMovementController(dir, isJumping);

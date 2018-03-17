@@ -7,23 +7,36 @@ public class PlayerDamageController : MonoBehaviour {
 	private PlayerController player;
 	public int damageToPlayer;
 	public AudioClip damage;
-	// Use this for initialization
-	void Start () {
+    public float waitTimeToDealDamageAgain;
+    float timeRemaining;
+    bool canCauseDamage=true;
+    // Use this for initialization
+    void Start () {
 		player = FindObjectOfType<PlayerController>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (timeRemaining >= 0)
+        {
+            timeRemaining -= Time.deltaTime;
+        }
 	}
-
-	void OnTriggerEnter2D(Collider2D other){
-		if(other.tag=="Player"){
+    
+	void OnTriggerStay2D(Collider2D other){
+		if(other.tag=="Player"&&timeRemaining<0){
             player.playerDamage(damageToPlayer);
             player.updateUI();
 			if(player.currentHealth<=0){
+                Debug.Log("test");
                 LevelManager.LM.Respawn();
 			}
+            
+            timeRemaining = waitTimeToDealDamageAgain;
 		}
 	}
+  
+
+   
+ 
 }
