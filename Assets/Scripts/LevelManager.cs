@@ -12,7 +12,7 @@ public class LevelManager : MonoBehaviour {
 
     private void Awake()
     {
-
+        /*
         if (LM == null)
         {
             DontDestroyOnLoad(gameObject);
@@ -22,6 +22,7 @@ public class LevelManager : MonoBehaviour {
         {
             Destroy(gameObject);
         }
+        */
     }
 
     private void Update()

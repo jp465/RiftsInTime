@@ -28,15 +28,10 @@ public class PlayerDamageController : MonoBehaviour {
             player.playerDamage(damageToPlayer);
             player.updateUI();
 			if(player.currentHealth<=0){
-                Debug.Log("test");
                 LevelManager.LM.Respawn();
 			}
             
             timeRemaining = waitTimeToDealDamageAgain;
 		}
-	}
-  
-
-   
- 
+	} 
 }
