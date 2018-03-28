@@ -13,5 +13,6 @@ public class menuscript : MonoBehaviour {
     public void QuitGame()
     {
         Debug.Log("QUIT GAME");
+        Application.Quit();
     }
 }

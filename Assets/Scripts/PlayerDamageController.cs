@@ -4,19 +4,22 @@ using UnityEngine;
 
 public class PlayerDamageController : MonoBehaviour {
 
-	private PlayerController player;
-	public int damageToPlayer;
+	PlayerController player;
+    LevelManager LM;
+    public int damageToPlayer;
 	public AudioClip damage;
     public float waitTimeToDealDamageAgain;
     float timeRemaining;
-    bool canCauseDamage=true;
+    //bool canCauseDamage=true;
+   
     // Use this for initialization
     void Start () {
 		player = FindObjectOfType<PlayerController>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        LM = FindObjectOfType<LevelManager>();
+    }
+
+    // Update is called once per frame
+    void Update () {
         if (timeRemaining >= 0)
         {
             timeRemaining -= Time.deltaTime;
@@ -28,7 +31,7 @@ public class PlayerDamageController : MonoBehaviour {
             player.playerDamage(damageToPlayer);
             player.updateUI();
 			if(player.currentHealth<=0){
-                LevelManager.LM.Respawn();
+                LM.Respawn();
 			}
             
             timeRemaining = waitTimeToDealDamageAgain;

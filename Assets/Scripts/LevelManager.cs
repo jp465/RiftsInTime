@@ -9,6 +9,9 @@ public class LevelManager : MonoBehaviour {
     public static LevelManager LM;
     public PlayerController player;
     public Slider healthBar;
+    //Slow Time
+    public bool timeSlowed = false;
+    public float slowMod;
 
     private void Awake()
     {
@@ -28,6 +31,10 @@ public class LevelManager : MonoBehaviour {
     private void Update()
     {
         healthBar.value = player.currentHealth;
+        if (timeSlowed == true)
+            slowMod = .1f;
+        else
+            slowMod = 1f;
     }
     public void Respawn()
     {

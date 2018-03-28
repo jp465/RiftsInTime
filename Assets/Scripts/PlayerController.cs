@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour {
 
     //Movement
     public float speedOfPlayerWalk;
-    CharMovement playerMove;
     Transform groundCheck;
     const float groundedRadius = .2f;
     bool isGrounded;
@@ -24,12 +23,13 @@ public class PlayerController : MonoBehaviour {
     //Misc
     private Animator playerAnim;
     private SpriteRenderer sprRen;
+    LevelManager LM;
 
     //Respawn
     public Vector3 respawnLocation;
     public float respawnDelay;
     public GameObject deathParticles;
-
+    
     //Coins
     public Text coinCounterText;
     public int wallet;
@@ -42,13 +42,18 @@ public class PlayerController : MonoBehaviour {
     //Shooting
     public GameObject laser_projectile;
     public Transform projectileSpawn;
+    public float pistolDamage;
     int direction=1;
     bool allowFire = true;
     float projSpawnX;
     
     //Slow Time
-    public bool timeSlowed = false;
-    float slowMod;
+    //public bool timeSlowed = false;
+    //float slowMod;
+    
+    //Progression 
+    public int playerLevel;
+    public int playerSkillPoints;
 
 
     private void Awake()
@@ -59,6 +64,7 @@ public class PlayerController : MonoBehaviour {
         playerAnim = GetComponent<Animator>();
         sprRen = GetComponent<SpriteRenderer>();
         projSpawnX = projectileSpawn.transform.localPosition.x;
+        LM = FindObjectOfType<LevelManager>();
     }
 
     // Use this for initialization
@@ -74,11 +80,12 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
         playerWeaponController();
         //healthBar.value = currentHealth;
-
+        /*
         if (timeSlowed == true)
             slowMod = .5f;
         else
             slowMod = 1f;
+       */
 	}
 
     private void FixedUpdate()
@@ -124,7 +131,7 @@ public class PlayerController : MonoBehaviour {
             
         }
 
-        //playerAnim.SetFloat("speed", Mathf.Abs(playerMove.velocity.x));
+        playerAnim.SetFloat("speed", Mathf.Abs(playerRB.velocity.x));
         playerAnim.SetBool("isGrounded", isGrounded);
     }
     
@@ -140,7 +147,7 @@ public class PlayerController : MonoBehaviour {
     {
         allowFire = false;
         var shoot = Instantiate(laser_projectile, projectileSpawn.position, projectileSpawn.rotation);
-        shoot.GetComponent<Rigidbody2D>().velocity = projectileSpawn.transform.right * direction * 9 * slowMod;
+        shoot.GetComponent<Rigidbody2D>().velocity = projectileSpawn.transform.right * direction * 9 * LM.slowMod;
         StartCoroutine("fireRateCap");
         
     }
@@ -163,7 +170,7 @@ public class PlayerController : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other){
 		if(other.tag=="Kill Plane"){
-			LevelManager.LM.Respawn();
+			LM.Respawn();
 		}
 
 		if(other.tag=="Checkpoint"){

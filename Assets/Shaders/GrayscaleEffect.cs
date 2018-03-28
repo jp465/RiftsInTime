@@ -9,28 +9,29 @@ public class GrayscaleEffect : MonoBehaviour
     private Material material;
     public CRTEffect CrtEffect;
     bool isEffectActive = false;
-    public PlayerController PC;
+    LevelManager LM;
 
-    private void Start()
+    InputManager IM;
+
+    void Awake()
     {
-       // PC = GetType(PlayerController);
+        material = new Material(Shader.Find("Hidden/GrayscaleShader"));
+        IM = FindObjectOfType<InputManager>();
+        LM = FindObjectOfType<LevelManager>();
     }
+
     private void Update()
     {
-        if (Input.GetKeyDown(InputManager.IM.rift1)&&!isEffectActive)
+        if (Input.GetKeyDown(IM.rift1)&&!isEffectActive)
         {
             isEffectActive = true;
-            PC.timeSlowed = true;
+            LM.timeSlowed = true;
             Debug.Log("press");
             StartCoroutine("FadeIn");
             
         }
     }
-    void Awake()
-    {
-        material = new Material(Shader.Find("Hidden/GrayscaleShader"));
-        
-    }
+    
 
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
@@ -68,6 +69,6 @@ public class GrayscaleEffect : MonoBehaviour
         }
         CrtEffect.crtEffectActive = false;
         isEffectActive = false;
-        PC.timeSlowed = false;
+        LM.timeSlowed = false;
     }
 }

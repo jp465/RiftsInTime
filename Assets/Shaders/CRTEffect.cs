@@ -5,7 +5,7 @@ using System.Collections;
 public class CRTEffect : MonoBehaviour
 {
     public Texture texture;
-    public Camera camera;
+    //public Camera camera;
     public Material material;
     public bool crtEffectActive=false;
 
