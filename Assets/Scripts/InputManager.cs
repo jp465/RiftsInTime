@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour {
-
+    
     public static InputManager IM;
     public KeyCode jump { get; set; }
     public KeyCode left { get; set; }

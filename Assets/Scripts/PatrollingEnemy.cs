@@ -9,7 +9,7 @@ public class PatrollingEnemy : MonoBehaviour {
     SpriteRenderer sprRen;
     LevelManager LM;
     public Animator anim;
-
+    
     [SerializeField]
     Transform startPos, endPos;
     bool isColliding;
@@ -29,19 +29,21 @@ public class PatrollingEnemy : MonoBehaviour {
 	void FixedUpdate () {
         Move();
         ChangeDirection();
-        if (LM.timeSlowed == true)
+        
+        if (LM.timeStopped == true)
         {
-            anim.speed = LM.slowMod;
+            anim.speed = 0;
         }
         else
         {
             anim.speed = 1f;
         }
+        
     }
 
     void Move()
     {
-        RB2D.velocity = new Vector3(transform.localScale.x,0f,0f)* walkSpeed * LM.slowMod;
+        RB2D.velocity = new Vector3(transform.localScale.x,0f,0f)* walkSpeed *LM.stoppedMod;
     }
 
     void ChangeDirection()

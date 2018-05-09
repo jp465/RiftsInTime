@@ -7,10 +7,11 @@ public class PlayerInput : MonoBehaviour {
     private PlayerController player;
     private bool isJumping;
     private float dir;
-
+    LevelManager LM;
     private void Awake()
     {
         player = GetComponent<PlayerController>();
+        LM = FindObjectOfType<LevelManager>();
     }
 
 
@@ -29,13 +30,12 @@ public class PlayerInput : MonoBehaviour {
     {
         // Read the inputs.
 
-        if (Input.GetKey(InputManager.IM.right))
+        if (Input.GetKey(InputManager.IM.right) && !LM.timeRewind)
             dir = 1;
-        else if (Input.GetKey(InputManager.IM.left))
+        else if (Input.GetKey(InputManager.IM.left) && !LM.timeRewind)
             dir = -1;
         else
             dir = 0;
-        
         
         
 

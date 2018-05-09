@@ -9,6 +9,7 @@ public class GrayscaleEffect : MonoBehaviour
     private Material material;
     public CRTEffect CrtEffect;
     bool isEffectActive = false;
+    bool isRewindEffectActive = false;
     LevelManager LM;
 
     InputManager IM;
@@ -22,13 +23,42 @@ public class GrayscaleEffect : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(IM.rift1)&&!isEffectActive)
+        if (Input.GetKeyDown(IM.rift1)&&!isEffectActive&&LM.powerLevel>=1)
         {
             isEffectActive = true;
             LM.timeSlowed = true;
-            Debug.Log("press");
-            StartCoroutine("FadeIn");
+            Debug.Log("press rift 1");
+            LM.CoolDownGauntlet();
+            StartCoroutine("SlowFadeIn");
             
+        }
+
+        if (Input.GetKeyDown(IM.rift2) && !isRewindEffectActive && LM.powerLevel >= 2)
+        {
+            isRewindEffectActive = true;
+            LM.timeRewind = true;
+            Debug.Log("press rift 2");
+            LM.CoolDownGauntlet();
+            StartCoroutine("RewindFadeIn");
+
+        }
+        /*
+        if (LM.timeRewind == false && isRewindEffectActive)
+        {
+            Debug.Log("Rewind Test2");
+            CrtEffect.crtEffectActive = true;
+            StartCoroutine("RewindFadeOut");
+        }
+        */
+
+        if (Input.GetKeyDown(IM.rift3) && !isEffectActive && LM.powerLevel == 3)
+        {
+            isEffectActive = true;
+            LM.timeStopped = true;
+            Debug.Log("press rift 3");
+            LM.CoolDownGauntlet();
+            StartCoroutine("StoppedFadeIn");
+
         }
     }
     
@@ -45,22 +75,79 @@ public class GrayscaleEffect : MonoBehaviour
         Graphics.Blit(source, destination, material);
     }
 
-    public IEnumerator FadeIn()
+    public IEnumerator SlowFadeIn()
     {
         CrtEffect.crtEffectActive = true;
         while (intensity <= 1)
         {
             
             intensity += .1f;
+            yield return new WaitForSeconds(.025f);
+        }
+        CrtEffect.crtEffectActive = false;
+        yield return new WaitForSeconds(1.25f);
+        CrtEffect.crtEffectActive = true;
+        StartCoroutine("SlowFadeOut");
+    }
+
+    public IEnumerator SlowFadeOut()
+    {
+        while (intensity >= 0)
+        {
+            intensity -= .1f;
+            yield return new WaitForSeconds(.025f);
+        }
+        CrtEffect.crtEffectActive = false;
+        isEffectActive = false;
+        LM.timeSlowed = false;
+    }
+
+    public IEnumerator RewindFadeIn()
+    {
+        CrtEffect.crtEffectActive = true;
+        while (intensity <= 1)
+        {
+
+            intensity += .1f;
             yield return new WaitForSeconds(.1f);
         }
         CrtEffect.crtEffectActive = false;
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(3.5f);
         CrtEffect.crtEffectActive = true;
-        StartCoroutine("FadeOut");
+        StartCoroutine("RewindFadeOut");
+
     }
 
-    public IEnumerator FadeOut()
+    public IEnumerator RewindFadeOut()
+    {
+        while (intensity >= 0)
+        {
+            Debug.Log("fadeouttest");
+            intensity -= .1f;
+            yield return new WaitForSeconds(.1f);
+        }
+
+        CrtEffect.crtEffectActive = false;
+        isRewindEffectActive = false;
+        LM.timeRewind = false;
+    }
+
+    public IEnumerator StoppedFadeIn()
+    {
+        CrtEffect.crtEffectActive = true;
+        while (intensity <= 1)
+        {
+            intensity += .1f;
+            yield return new WaitForSeconds(.1f);
+        }
+
+        CrtEffect.crtEffectActive = false;
+        yield return new WaitForSeconds(5f);
+        CrtEffect.crtEffectActive = true;
+        StartCoroutine("StoppedFadeOut");
+    }
+
+    public IEnumerator StoppedFadeOut()
     {
         while (intensity >= 0)
         {
@@ -69,6 +156,7 @@ public class GrayscaleEffect : MonoBehaviour
         }
         CrtEffect.crtEffectActive = false;
         isEffectActive = false;
-        LM.timeSlowed = false;
+        LM.timeStopped = false;
+        
     }
 }

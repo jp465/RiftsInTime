@@ -38,9 +38,10 @@ GameObject:
   - component: {fileID: 95187369383471130}
   - component: {fileID: 61221313974614574}
   - component: {fileID: 114142949235039662}
+  - component: {fileID: 114100159240689744}
   m_Layer: 0
   m_Name: FlyingEnemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -70,7 +71,7 @@ GameObject:
   - component: {fileID: 4041834542988364}
   m_Layer: 0
   m_Name: FlyingEnemyHolder
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -172,6 +173,20 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114100159240689744
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1725336121339078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e4ad0886bab70b4187091eabce5d909, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageToPlayer: 1
+  damage: {fileID: 0}
+  waitTimeToDealDamageAgain: 2
 --- !u!114 &114142949235039662
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -185,7 +200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startPos: {fileID: 4490013164520704}
   endPos: {fileID: 4474556073212458}
-  moveSpeed: 20
+  moveSpeed: 30
   currentTarget: {x: 0, y: 0, z: 0}
   anim: {fileID: 0}
 --- !u!212 &212227051850388532

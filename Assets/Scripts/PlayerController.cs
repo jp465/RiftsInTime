@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour {
 
     //Respawn
     public Vector3 respawnLocation;
+    public Vector3 ogRespawn;
     public float respawnDelay;
     public GameObject deathParticles;
     
@@ -46,7 +47,10 @@ public class PlayerController : MonoBehaviour {
     int direction=1;
     bool allowFire = true;
     float projSpawnX;
-    
+
+    public float knockbackForce;
+    public float knockbackLength;
+    float knockbackCounter;
     //Slow Time
     //public bool timeSlowed = false;
     //float slowMod;
@@ -70,6 +74,7 @@ public class PlayerController : MonoBehaviour {
     // Use this for initialization
     void Start () {
 		respawnLocation = transform.position;
+        ogRespawn = transform.position;
         coinCounterText.text = "Coins: " + 0;
         currentHealth = maxHealth;
         updateUI();
@@ -102,41 +107,69 @@ public class PlayerController : MonoBehaviour {
 
     public void playerMovementController(float move, bool jump)
     {
-        //only control the player if grounded or airControl is turned on
-        if (isGrounded || airControl)
-        {
-            // Move the character
-            playerRB.velocity = new Vector2(move * speedOfPlayerWalk, playerRB.velocity.y) ;
+        
 
-            if (move > 0)
+
+        if (knockbackCounter <= 0)
+        {
+            //only control the player if grounded or airControl is turned on
+            if (isGrounded || airControl)
             {
-                sprRen.flipX = false;
-                direction = 1;
-                projectileSpawn.transform.localPosition = new Vector3(projSpawnX, 0f, 0f);
-            }else if (move < 0)
+                // Move the character
+                playerRB.velocity = new Vector2(move * speedOfPlayerWalk, playerRB.velocity.y);
+                
+                
+               
+                if (move > 0)
+                {
+                    sprRen.flipX = false;
+
+                    direction = 1;
+                    projectileSpawn.transform.localPosition = new Vector3(projSpawnX, 0f, 0f);
+                }
+                else if (move < 0)
+                {
+                    sprRen.flipX =  true;
+                    direction = -1;
+                    projectileSpawn.transform.localPosition = new Vector3(-projSpawnX, 0f, 0f);
+                }
+            }
+
+
+
+            // If the player should jump...
+            if (isGrounded && jump)
             {
-                sprRen.flipX = true;
-                direction = -1;
-                projectileSpawn.transform.localPosition = new Vector3(-projSpawnX, 0f, 0f);
+                // Add a vertical force to the player.
+                isGrounded = false;
+                airControl = true;
+                playerRB.velocity = new Vector2(0f, maxJumpHeight);
             }
         }
 
-        // If the player should jump...
-        if (isGrounded && jump)
+        if (knockbackCounter > 0)
         {
-            // Add a vertical force to the player.
-            isGrounded = false;
-            airControl = true;
-            playerRB.velocity = new Vector2(0f, maxJumpHeight);
-            
-        }
+            knockbackCounter -= Time.deltaTime;
+            if (sprRen.flipX == false) {
+                playerRB.velocity = new Vector3(-knockbackForce, knockbackForce, 0f);
+            }
+            else
+            {
+                playerRB.velocity = new Vector3(knockbackForce, knockbackForce, 0f);
 
+            }
+        }
         playerAnim.SetFloat("speed", Mathf.Abs(playerRB.velocity.x));
         playerAnim.SetBool("isGrounded", isGrounded);
     }
-    
+
+    void knockback()
+    {
+        knockbackCounter = knockbackLength;
+    }
+
     void playerWeaponController() {
-        if (Input.GetKey(InputManager.IM.attack) & allowFire==true)
+        if (Input.GetKey(InputManager.IM.attack) && allowFire==true && !LM.timeRewind)
         {
             Debug.Log("shoot");
             fire();
@@ -147,7 +180,7 @@ public class PlayerController : MonoBehaviour {
     {
         allowFire = false;
         var shoot = Instantiate(laser_projectile, projectileSpawn.position, projectileSpawn.rotation);
-        shoot.GetComponent<Rigidbody2D>().velocity = projectileSpawn.transform.right * direction * 9 * LM.slowMod;
+        shoot.GetComponent<Rigidbody2D>().velocity = projectileSpawn.transform.right * direction * 9;
         StartCoroutine("fireRateCap");
         
     }
@@ -166,6 +199,7 @@ public class PlayerController : MonoBehaviour {
     public void playerDamage(int damage)
     {
         currentHealth -= damage;
+        knockback();
     }
 
     void OnTriggerEnter2D(Collider2D other){
@@ -173,20 +207,33 @@ public class PlayerController : MonoBehaviour {
 			LM.Respawn();
 		}
 
-		if(other.tag=="Checkpoint"){
+       if (other.tag=="Checkpoint"){
 			respawnLocation = other.transform.position;
 		}
 
 		if (other.gameObject.CompareTag("Exit")){
-			SceneManager.LoadScene(PlayerPrefs.GetString("nextScene"));
+            PlayerPrefs.SetInt("coins", 0);
+            ogRespawn = respawnLocation;
+            SceneManager.LoadScene("WinScreen");
 		}
- 	}
 
-	void OnCollisionEnter2D(Collision2D other){
+        
+
+    }
+
+    
+
+    void OnCollisionEnter2D(Collision2D other){
 		if(other.gameObject.tag=="MovingPlatform"){
 			transform.parent = other.transform;
 		}
-	}
+        if (other.gameObject.tag == "Enemy")
+        {
+            playerDamage(1);
+        }
+
+        
+    }
 
 	void OnCollisionExit2D(Collision2D other){
 		if(other.gameObject.tag=="MovingPlatform"){
@@ -200,9 +247,6 @@ public class PlayerController : MonoBehaviour {
 		updateUI();
 	}
 
-    void knockback()
-    {
-
-    }
+    
 
 }

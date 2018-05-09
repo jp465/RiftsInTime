@@ -11,5 +11,12 @@ public class LaserProjectile : MonoBehaviour {
             Debug.Log("Destroy laser");
             Destroy(gameObject);
         }
+
+        if (other.gameObject.tag == "Enemy")
+        {
+            Debug.Log("Destroy laser");
+            Destroy(other.gameObject);
+            Destroy(gameObject);
+        }
     }
 }

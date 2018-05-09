@@ -10,7 +10,7 @@ public class FlyingEnemy : MonoBehaviour {
     public Vector3 currentTarget;
     LevelManager LM;
     public Animator anim;
-
+    
     // Use this for initialization
     void Start () {
         currentTarget = endPos.position;
@@ -20,16 +20,17 @@ public class FlyingEnemy : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (LM.timeSlowed == true)
+
+        if (LM.timeStopped == true)
         {
-            anim.speed = LM.slowMod;
+            anim.speed = LM.stoppedMod;
         }
         else
         {
-            anim.speed = 1f;
+            anim.speed = LM.stoppedMod;
         }
 
-        transform.position = Vector3.MoveTowards(transform.position, currentTarget, moveSpeed * Time.deltaTime*LM.slowMod);
+        transform.position = Vector3.MoveTowards(transform.position, currentTarget, moveSpeed * Time.deltaTime*LM.stoppedMod);
         if (transform.position == endPos.position)
         {
             currentTarget = startPos.position;

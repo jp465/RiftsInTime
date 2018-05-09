@@ -9,12 +9,18 @@ public class LevelManager : MonoBehaviour {
     public static LevelManager LM;
     public PlayerController player;
     public Slider healthBar;
+    bool gauntletOnCooldown = false;
+    public int powerLevel = 0;
     //Slow Time
     public bool timeSlowed = false;
-    public float slowMod;
+    public bool timeRewind = false;
+    public bool timeStopped = false;
+    public float stoppedMod;
 
     private void Awake()
     {
+        Time.timeScale = 1f;
+        
         /*
         if (LM == null)
         {
@@ -28,13 +34,31 @@ public class LevelManager : MonoBehaviour {
         */
     }
 
+    private void Start()
+    {
+        ChargeGauntlet();
+    }
     private void Update()
     {
         healthBar.value = player.currentHealth;
+        
         if (timeSlowed == true)
-            slowMod = .1f;
+        {
+            Time.timeScale = .25f;
+        }
         else
-            slowMod = 1f;
+        {
+            Time.timeScale = 1f;
+        }
+
+        if (timeStopped == true)
+        {
+            stoppedMod = 0f;
+        }
+        else
+        {
+            stoppedMod = 1f;
+        }
     }
     public void Respawn()
     {
@@ -53,10 +77,51 @@ public class LevelManager : MonoBehaviour {
         player.gameObject.SetActive(false);
         Debug.Log(player.respawnLocation + " respawnco1 " + player.respawnDelay + " seconds");
         yield return new WaitForSeconds(player.respawnDelay);
+        SceneManager.LoadScene("LoseScreen");
         Debug.Log(player.respawnLocation + " respawnco2");
         player.transform.position = player.respawnLocation;
         player.gameObject.SetActive(true);
         player.currentHealth = player.maxHealth;
         player.updateUI();
+    }
+
+    public void ChargeGauntlet()
+    {
+        if (powerLevel <= 3 && !gauntletOnCooldown)
+        {
+            StartCoroutine("PowerLevelCo");
+        }
+    }
+
+    public void CoolDownGauntlet()
+    {
+        powerLevel = 0;
+        gauntletOnCooldown = true;
+        StartCoroutine("CooldownCo");
+        
+    }
+
+    IEnumerator PowerLevelCo()
+    {
+
+       
+      for (int i = powerLevel; i < 3; i++)
+        {
+            yield return new WaitForSeconds(5f);
+            powerLevel += 1;
+            Debug.Log("PowerLevel =" + powerLevel);
+        }
+                 
+        
+        
+    }
+    IEnumerator CooldownCo()
+    {
+        Debug.Log("PowerLevel =" + powerLevel+ " CoolingDown");
+        
+        yield return new WaitForSeconds(10f);
+        gauntletOnCooldown = false;
+        ChargeGauntlet();
+
     }
 }
