@@ -11,6 +11,7 @@ public class LevelManager : MonoBehaviour {
     public Slider healthBar;
     bool gauntletOnCooldown = false;
     public int powerLevel = 0;
+    public Text powertext;
     //Slow Time
     public bool timeSlowed = false;
     public bool timeRewind = false;
@@ -41,15 +42,8 @@ public class LevelManager : MonoBehaviour {
     private void Update()
     {
         healthBar.value = player.currentHealth;
-        
-        if (timeSlowed == true)
-        {
-            Time.timeScale = .25f;
-        }
-        else
-        {
-            Time.timeScale = 1f;
-        }
+        powertext.text = ""+ powerLevel;
+       
 
         if (timeStopped == true)
         {
@@ -58,6 +52,18 @@ public class LevelManager : MonoBehaviour {
         else
         {
             stoppedMod = 1f;
+        }
+    }
+
+    public void CheckSlowTime()
+    {
+        if (timeSlowed == true)
+        {
+            Time.timeScale = .25f;
+        }
+        else
+        {
+            Time.timeScale = 1f;
         }
     }
     public void Respawn()
@@ -107,7 +113,7 @@ public class LevelManager : MonoBehaviour {
        
       for (int i = powerLevel; i < 3; i++)
         {
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(3f);
             powerLevel += 1;
             Debug.Log("PowerLevel =" + powerLevel);
         }
@@ -119,7 +125,7 @@ public class LevelManager : MonoBehaviour {
     {
         Debug.Log("PowerLevel =" + powerLevel+ " CoolingDown");
         
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(5f);
         gauntletOnCooldown = false;
         ChargeGauntlet();
 

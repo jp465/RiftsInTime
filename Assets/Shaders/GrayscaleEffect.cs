@@ -27,6 +27,7 @@ public class GrayscaleEffect : MonoBehaviour
         {
             isEffectActive = true;
             LM.timeSlowed = true;
+            LM.CheckSlowTime();
             Debug.Log("press rift 1");
             LM.CoolDownGauntlet();
             StartCoroutine("SlowFadeIn");
@@ -100,6 +101,7 @@ public class GrayscaleEffect : MonoBehaviour
         CrtEffect.crtEffectActive = false;
         isEffectActive = false;
         LM.timeSlowed = false;
+        LM.CheckSlowTime();
     }
 
     public IEnumerator RewindFadeIn()

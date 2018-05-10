@@ -10,4 +10,6 @@ public class CloseSign : MonoBehaviour {
         signMenu.gameObject.SetActive(false);
        
     }
+
+   
 }

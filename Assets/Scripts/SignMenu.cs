@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class SignMenu : MonoBehaviour {
 
     public GameObject signMenu;
-     bool open = false;
+    public bool open = false;
     public string inputSignText;
     public Text SignText;
     Animator anim;
@@ -39,8 +39,9 @@ public class SignMenu : MonoBehaviour {
 
             signMenu.gameObject.SetActive(true);
             open = true;
-            anim.SetBool("open",false);
             
+            anim.SetBool("open",false);
+
             
 
         }
@@ -48,19 +49,27 @@ public class SignMenu : MonoBehaviour {
         
     }
     
-   
+    public void CheckForPauseTime()
+    {
+        if (open == true)
+        {
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+        }
+    }
     public void Close()
     {
 
 
         open = false;
+        
+
         anim.SetBool("close", true);
+        
+    }
  
-    }
-    public void CloseMenu()
-    {
-        signMenu.gameObject.SetActive(false);
-        //open = false;
-    }
 
 }
